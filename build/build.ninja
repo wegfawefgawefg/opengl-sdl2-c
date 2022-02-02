@@ -52,7 +52,11 @@ build main@exe/glprogram.cpp.o: cpp_COMPILER ../src/glprogram.cpp
  DEPFILE = main@exe/glprogram.cpp.o.d
  ARGS = -Imain@exe -I. -I../src -I../src/glm -I/usr/include/SDL2 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -g -D_REENTRANT
 
-build main: cpp_LINKER main@exe/main.cpp.o main@exe/logs.cpp.o main@exe/loadshader.cpp.o main@exe/glprogram.cpp.o | /usr/lib/x86_64-linux-gnu/libSDL2.so /usr/lib/x86_64-linux-gnu/libSDL2_image.so /usr/lib/x86_64-linux-gnu/libSDL2_ttf.so /usr/lib64/libGLEW.so /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libX11.so /usr/lib/x86_64-linux-gnu/libGLU.so
+build main@exe/glinit.cpp.o: cpp_COMPILER ../src/glinit.cpp
+ DEPFILE = main@exe/glinit.cpp.o.d
+ ARGS = -Imain@exe -I. -I../src -I../src/glm -I/usr/include/SDL2 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -g -D_REENTRANT
+
+build main: cpp_LINKER main@exe/main.cpp.o main@exe/logs.cpp.o main@exe/loadshader.cpp.o main@exe/glprogram.cpp.o main@exe/glinit.cpp.o | /usr/lib/x86_64-linux-gnu/libSDL2.so /usr/lib/x86_64-linux-gnu/libSDL2_image.so /usr/lib/x86_64-linux-gnu/libSDL2_ttf.so /usr/lib64/libGLEW.so /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libX11.so /usr/lib/x86_64-linux-gnu/libGLU.so
  LINK_ARGS = -Wl,--as-needed -Wl,--no-undefined -Wl,--start-group /usr/lib/x86_64-linux-gnu/libSDL2.so /usr/lib/x86_64-linux-gnu/libSDL2_image.so /usr/lib/x86_64-linux-gnu/libSDL2_ttf.so /usr/lib64/libGLEW.so /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libX11.so /usr/lib/x86_64-linux-gnu/libGLU.so -Wl,--end-group
 
 # Test rules

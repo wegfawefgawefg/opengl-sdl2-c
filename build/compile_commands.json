@@ -22,5 +22,11 @@
     "command": "c++ -Imain@exe -I. -I../src -I../src/glm -I/usr/include/SDL2 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -g -D_REENTRANT -MD -MQ 'main@exe/glprogram.cpp.o' -MF 'main@exe/glprogram.cpp.o.d' -o 'main@exe/glprogram.cpp.o' -c ../src/glprogram.cpp",
     "file": "../src/glprogram.cpp",
     "output": "main@exe/glprogram.cpp.o"
+  },
+  {
+    "directory": "/home/vega/Coding/Graphics/opengl-sdl2-c/build",
+    "command": "c++ -Imain@exe -I. -I../src -I../src/glm -I/usr/include/SDL2 -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -g -D_REENTRANT -MD -MQ 'main@exe/glinit.cpp.o' -MF 'main@exe/glinit.cpp.o.d' -o 'main@exe/glinit.cpp.o' -c ../src/glinit.cpp",
+    "file": "../src/glinit.cpp",
+    "output": "main@exe/glinit.cpp.o"
   }
 ]

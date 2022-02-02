@@ -18,70 +18,27 @@ and may not be redistributed without written permission.*/
 #include "logs.hpp"
 #include "loadshader.hpp"
 #include "glprogram.hpp"
+#include "glinit.hpp"
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-bool init();
 bool initGL();
 void handleKeys( unsigned char key, int x, int y );
 void update();
 void render();
 void close();
 
-//The window we'll be rendering to
-SDL_Window* gWindow = NULL;
-SDL_GLContext gContext;
 bool gRenderQuad = true;
 
-//Graphics program
+SDL_Window * gWindow = NULL;
+SDL_GLContext gContext; 
+SDL_GLContext * gPContext = &gContext;
+
 GLuint gProgramID = 0;
 GLint gVertexPos2DLocation = -1;
 GLuint gVBO = 0;
 GLuint gIBO = 0;
-
-bool init()
-{
-	bool success = true;
-	if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
-		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
-		success = false;
-	}
-	else{
-		//Use OpenGL 3.1 core
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
-		if( gWindow == NULL ){
-			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
-			success = false;
-		}
-		else{
-			gContext = SDL_GL_CreateContext( gWindow );
-			if( gContext == NULL ){
-				printf( "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
-				success = false;
-			}
-			else{
-				glewExperimental = GL_TRUE; 
-				GLenum glewError = glewInit();
-				if( glewError != GLEW_OK ){
-					printf( "Error initializing GLEW! %s\n", glewGetErrorString( glewError ) );
-				}
-				if( SDL_GL_SetSwapInterval( 1 ) < 0 ){//Use Vsync
-					printf( "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
-				}
-				if( !initGL() ){
-					printf( "Unable to initialize OpenGL!\n" );
-					success = false;
-				}
-			}
-		}
-	}
-
-	return success;
-}
 
 /* bool initGL():
 	create a gl program
@@ -172,51 +129,44 @@ void render()
 	}
 }
 
-void close()
+void cleanup()
 {
-	//Deallocate program
-	glDeleteProgram( gProgramID );
-
-	//Destroy window	
-	SDL_DestroyWindow( gWindow );
-	gWindow = NULL;
-
-	//Quit SDL subsystems
+	glDeleteProgram(gProgramID);
+	SDL_DestroyWindow(gWindow);
 	SDL_Quit();
+    TTF_Quit();
 }
 
 int main( int argc, char* args[] )
 {
-	//Start up SDL and create window
-	if( !init() )
-	{
+	if(!init(&gPContext, &gWindow)){
 		printf( "Failed to initialize!\n" );
-	}
-	else
+		cleanup(); return false;}
+	if(!initGL()){
+		printf("Unable to initialize OpenGL!\n"); return false;}
+
+	bool quit = false;
+	SDL_Event e;
+	SDL_StartTextInput();
+	while( !quit )
 	{
-		bool quit = false;
-		SDL_Event e;
-		SDL_StartTextInput();
-		while( !quit )
+		while( SDL_PollEvent( &e ) != 0 )
 		{
-			while( SDL_PollEvent( &e ) != 0 )
+			if( e.type == SDL_QUIT )
 			{
-				if( e.type == SDL_QUIT )
-				{
-					quit = true;
-				}
-				else if( e.type == SDL_TEXTINPUT )
-				{
-					int x = 0, y = 0;
-					SDL_GetMouseState( &x, &y );
-					handleKeys( e.text.text[ 0 ], x, y );
-				}
+				quit = true;
 			}
-			render();
-			SDL_GL_SwapWindow( gWindow );
+			else if( e.type == SDL_TEXTINPUT )
+			{
+				int x = 0, y = 0;
+				SDL_GetMouseState( &x, &y );
+				handleKeys( e.text.text[ 0 ], x, y );
+			}
 		}
-		SDL_StopTextInput();
+		render();
+		SDL_GL_SwapWindow(gWindow);
 	}
-	close();
+	SDL_StopTextInput();
+	cleanup();
 	return 0;
 }

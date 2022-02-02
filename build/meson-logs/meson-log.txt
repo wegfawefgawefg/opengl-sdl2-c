@@ -1,4 +1,4 @@
-Build started at 2022-02-01T19:13:10.281034
+Build started at 2022-02-01T21:07:01.517742
 Main binary: /usr/bin/python3
 Build Options: -Dbackend=ninja
 Python system: Linux
@@ -28,8 +28,8 @@ Build targets in project: 1
 
 Found ninja-1.10.0 at /usr/bin/ninja
 Running compile:
-Working directory:  /home/vega/Coding/Graphics/opengl-sdl2-c/build/meson-private/tmpcsiqinyw
-Command line:  c++ /home/vega/Coding/Graphics/opengl-sdl2-c/build/meson-private/tmpcsiqinyw/testfile.cpp -o /home/vega/Coding/Graphics/opengl-sdl2-c/build/meson-private/tmpcsiqinyw/output.obj -pipe -c -D_FILE_OFFSET_BITS=64 -O0 -fpermissive --print-search-dirs 
+Working directory:  /home/vega/Coding/Graphics/opengl-sdl2-c/build/meson-private/tmpoe5pv10i
+Command line:  c++ /home/vega/Coding/Graphics/opengl-sdl2-c/build/meson-private/tmpoe5pv10i/testfile.cpp -o /home/vega/Coding/Graphics/opengl-sdl2-c/build/meson-private/tmpoe5pv10i/output.obj -pipe -c -D_FILE_OFFSET_BITS=64 -O0 -fpermissive --print-search-dirs 
 
 Code:
  

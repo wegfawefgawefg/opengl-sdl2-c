@@ -16,6 +16,7 @@ executable('main',
         'logs.cpp', 'logs.hpp',
         'loadshader.cpp', 'loadshader.hpp',
         'glprogram.cpp', 'glprogram.hpp',
+        'glinit.cpp', 'glinit.hpp',
     ],
     include_directories: [
         glm_dep,
