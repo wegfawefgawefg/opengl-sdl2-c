@@ -32,6 +32,7 @@ void close();
 bool gRenderQuad = true;
 
 SDL_Window * gWindow = NULL;
+SDL_GLContext gContext; 
 SDL_GLContext * gPContext = new SDL_GLContext();
 
 GLuint gProgramID = 0;
