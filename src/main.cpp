@@ -139,7 +139,7 @@ void cleanup()
 
 int main( int argc, char* args[] )
 {
-	if(!init(&gPContext, &gWindow)){
+	if(!init(&gPContext, &gWindow, SCREEN_WIDTH, SCREEN_HEIGHT)){
 		printf( "Failed to initialize!\n" );
 		cleanup(); return false;}
 	if(!initGL()){
