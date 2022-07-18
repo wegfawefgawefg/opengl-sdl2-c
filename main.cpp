@@ -3,9 +3,9 @@
 
 #include <glew/glew.h>
 #include <GL/gl.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -15,11 +15,12 @@ static const int WINDOW_WIDTH = 16 * SCALE;
 static const int WINDOW_HEIGHT = 9 * SCALE;
 
 void draw_text(
-        SDL_Renderer *renderer, 
-        TTF_Font *font, 
-        char *text,
-        SDL_Color color, 
-        int x, int y) {
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    char *text,
+    SDL_Color color,
+    int x, int y)
+{
     SDL_Surface *text_surface = TTF_RenderText_Solid(font, text, color);
     SDL_Texture *text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
     SDL_Rect text_rect = {x, y, text_surface->w, text_surface->h};
@@ -28,11 +29,12 @@ void draw_text(
     SDL_DestroyTexture(text_texture);
 }
 
-struct dimensions {
+struct dimensions
+{
     int width, height;
 };
 
-glm::mat4 transform(glm::vec2 const& Orientation, glm::vec3 const& Translate, glm::vec3 const& Up)
+glm::mat4 transform(glm::vec2 const &Orientation, glm::vec3 const &Translate, glm::vec3 const &Up)
 {
     glm::mat4 Proj = glm::perspective(glm::radians<float>(45.f), 1.33f, 0.1f, 10.f);
     glm::mat4 ViewTranslate = glm::translate(glm::mat4(1.f), Translate);
@@ -42,109 +44,110 @@ glm::mat4 transform(glm::vec2 const& Orientation, glm::vec3 const& Translate, gl
     return Proj * View * Model;
 }
 
-void printProgramLog( GLuint program );
-void printShaderLog( GLuint shader );
+void printProgramLog(GLuint program);
+void printShaderLog(GLuint shader);
 
 GLuint gProgramID = 0;
 GLint gVertexPos2DLocation = -1;
 GLuint gVBO = 0;
 GLuint gIBO = 0;
 
-void printProgramLog( GLuint program )
+void printProgramLog(GLuint program)
 {
-    //Make sure name is shader
-    if( glIsProgram( program ) )
+    // Make sure name is shader
+    if (glIsProgram(program))
     {
-        //Program log length
+        // Program log length
         int infoLogLength = 0;
         int maxLength = infoLogLength;
-        
-        //Get info string length
-        glGetProgramiv( program, GL_INFO_LOG_LENGTH, &maxLength );
-        
-        //Allocate string
-        char* infoLog = new char[ maxLength ];
-        
-        //Get info log
-        glGetProgramInfoLog( program, maxLength, &infoLogLength, infoLog );
-        if( infoLogLength > 0 )
+
+        // Get info string length
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+        // Allocate string
+        char *infoLog = new char[maxLength];
+
+        // Get info log
+        glGetProgramInfoLog(program, maxLength, &infoLogLength, infoLog);
+        if (infoLogLength > 0)
         {
-            //Print Log
-            printf( "%s\n", infoLog );
+            // Print Log
+            printf("%s\n", infoLog);
         }
-        
-        //Deallocate string
+
+        // Deallocate string
         delete[] infoLog;
     }
     else
     {
-        printf( "Name %d is not a program\n", program );
+        printf("Name %d is not a program\n", program);
     }
 }
 
-void printShaderLog( GLuint shader )
+void printShaderLog(GLuint shader)
 {
-    //Make sure name is shader
-    if( glIsShader( shader ) )
+    // Make sure name is shader
+    if (glIsShader(shader))
     {
-        //Shader log length
+        // Shader log length
         int infoLogLength = 0;
         int maxLength = infoLogLength;
-        
-        //Get info string length
-        glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &maxLength );
-        
-        //Allocate string
-        char* infoLog = new char[ maxLength ];
-        
-        //Get info log
-        glGetShaderInfoLog( shader, maxLength, &infoLogLength, infoLog );
-        if( infoLogLength > 0 )
+
+        // Get info string length
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+        // Allocate string
+        char *infoLog = new char[maxLength];
+
+        // Get info log
+        glGetShaderInfoLog(shader, maxLength, &infoLogLength, infoLog);
+        if (infoLogLength > 0)
         {
-            //Print Log
-            printf( "%s\n", infoLog );
+            // Print Log
+            printf("%s\n", infoLog);
         }
 
-        //Deallocate string
+        // Deallocate string
         delete[] infoLog;
     }
     else
     {
-        printf( "Name %d is not a shader\n", shader );
+        printf("Name %d is not a shader\n", shader);
     }
 }
 
 void render()
 {
-    //Clear color buffer
-    glClear( GL_COLOR_BUFFER_BIT );
-    
-    //Render quad
-    if( gRenderQuad )
+    // Clear color buffer
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Render quad
+    if (gRenderQuad)
     {
-        //Bind program
-        glUseProgram( gProgramID );
+        // Bind program
+        glUseProgram(gProgramID);
 
-        //Enable vertex position
-        glEnableVertexAttribArray( gVertexPos2DLocation );
+        // Enable vertex position
+        glEnableVertexAttribArray(gVertexPos2DLocation);
 
-        //Set vertex data
-        glBindBuffer( GL_ARRAY_BUFFER, gVBO );
-        glVertexAttribPointer( gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL );
+        // Set vertex data
+        glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+        glVertexAttribPointer(gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
 
-        //Set index data and render
-        glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gIBO );
-        glDrawElements( GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL );
+        // Set index data and render
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+        glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
 
-        //Disable vertex position
-        glDisableVertexAttribArray( gVertexPos2DLocation );
+        // Disable vertex position
+        glDisableVertexAttribArray(gVertexPos2DLocation);
 
-        //Unbind program
-        glUseProgram( NULL );
+        // Unbind program
+        glUseProgram(NULL);
     }
 }
 
-int main() {
+int main()
+{
     // glm::vec3 a = glm::vec3(1, 1, 1);
     // glm::vec3 b = glm::vec3(2, 2, 2);
     // auto c = a + b;
@@ -174,29 +177,34 @@ int main() {
     SDL_DisplayMode current;
     SDL_GetCurrentDisplayMode(0, &current);
     SDL_GLContext glcontext = SDL_GL_CreateContext(window);
-    if(glcontext == NULL){
-        printf( "OpenGL context could not be created! SDL Error: %s\n", SDL_GetError() );
-    } 
-    else{
-        glewExperimental = GL_TRUE; 
+    if (glcontext == NULL)
+    {
+        printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
+    }
+    else
+    {
+        glewExperimental = GL_TRUE;
         GLenum glewError = glewInit();
-        if(glewError != GLEW_OK){
-            printf( "Error initializing GLEW! %s\n", glewGetErrorString( glewError ) );
+        if (glewError != GLEW_OK)
+        {
+            printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
         }
-        if(SDL_GL_SetSwapInterval( 1 ) < 0){  //vsync
-            printf( "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
+        if (SDL_GL_SetSwapInterval(1) < 0)
+        { // vsync
+            printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
         }
         // if(!initGL()){
         //     printf( "Unable to initialize OpenGL!\n" );
         // }
     }
 
-    printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION), 
-    glGetString(GL_SHADING_LANGUAGE_VERSION));
+    printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION),
+           glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     // Load font
     TTF_Font *font = TTF_OpenFont("./assets/FreeSans.ttf", 24);
-    if (font == NULL) {
+    if (font == NULL)
+    {
         printf("Failed to load font: %s\n", TTF_GetError());
         return 1;
     }
@@ -207,22 +215,25 @@ int main() {
     double dt = 0;
 
     SDL_Event event;
-    while (1) {
+    while (1)
+    {
         // update delta time
         frame_time_last = frame_time_now;
         frame_time_now = SDL_GetPerformanceCounter();
-        dt = (double)((frame_time_now - frame_time_last) / (double)SDL_GetPerformanceFrequency() );
-        const double fps = 1.0 / dt;   
+        dt = (double)((frame_time_now - frame_time_last) / (double)SDL_GetPerformanceFrequency());
+        const double fps = 1.0 / dt;
 
         // events
         SDL_PollEvent(&event);
-        if (event.type == SDL_QUIT) {
+        if (event.type == SDL_QUIT)
+        {
             break;
         }
 
         // keys
         const Uint8 *keys = SDL_GetKeyboardState(NULL);
-        if (keys[SDL_SCANCODE_Q]) {
+        if (keys[SDL_SCANCODE_Q])
+        {
             break;
         }
 
@@ -239,7 +250,7 @@ int main() {
 
         // draw fps
         const SDL_Color color = {255, 255, 255, 255};
-             
+
         char fps_str[32];
         sprintf(fps_str, "%d", (int)fps);
         draw_text(renderer, font, fps_str, color, 0, 0);
@@ -253,5 +264,4 @@ int main() {
     SDL_Quit();
 
     return 0;
-
 }

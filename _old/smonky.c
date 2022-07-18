@@ -10,12 +10,11 @@
     texture
 */
 
-
 #include <stdio.h>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <cglm/cglm.h>
 
 static const int SCALE = 100;
@@ -23,11 +22,12 @@ static const int WINDOW_WIDTH = 16 * SCALE;
 static const int WINDOW_HEIGHT = 9 * SCALE;
 
 void draw_text(
-        SDL_Renderer *renderer, 
-        TTF_Font *font, 
-        char *text,
-        SDL_Color color, 
-        int x, int y) {
+    SDL_Renderer *renderer,
+    TTF_Font *font,
+    char *text,
+    SDL_Color color,
+    int x, int y)
+{
     SDL_Surface *text_surface = TTF_RenderText_Solid(font, text, color);
     SDL_Texture *text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
     SDL_Rect text_rect = {x, y, text_surface->w, text_surface->h};
@@ -36,20 +36,23 @@ void draw_text(
     SDL_DestroyTexture(text_texture);
 }
 
-struct dimensions {
+struct dimensions
+{
     int width, height;
 };
 
 void load_image(
-        SDL_Renderer *renderer, 
-        SDL_Texture **texture, 
-        char *path) {
+    SDL_Renderer *renderer,
+    SDL_Texture **texture,
+    char *path)
+{
     SDL_Surface *surface = SDL_LoadBMP(path);
     *texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
 }
 
-const float rand_range(float min, float max) {
+const float rand_range(float min, float max)
+{
     return min + (max - min) * (rand() % RAND_MAX / (float)RAND_MAX);
 }
 
@@ -57,7 +60,8 @@ const vec2 emitter = {
     WINDOW_WIDTH / 4,
     WINDOW_HEIGHT / 2,
 };
-struct smoke {
+struct smoke
+{
     vec2 pos;
     vec2 vel;
     float angle;
@@ -84,7 +88,7 @@ struct smoke new_smoke(vec2 dir)
     vel_rand_component[0] = rand_range(-SMOKE_SPEED, SMOKE_SPEED);
     vel_rand_component[1] = rand_range(-SMOKE_SPEED, SMOKE_SPEED);
     glm_vec2_normalize(vel_rand_component);
-    glm_vec2_scale(vel_rand_component, 1.0/4.0, vel_rand_component);
+    glm_vec2_scale(vel_rand_component, 1.0 / 4.0, vel_rand_component);
     glm_vec2_add(vel, vel_rand_component, vel);
 
     glm_vec2_add(dir, vel, vel);
@@ -114,10 +118,10 @@ int main(int argc, char **argv)
     SDL_Init(SDL_INIT_EVERYTHING);
     TTF_Init();
 
-    window = SDL_CreateWindow("smonky", 
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
-        WINDOW_WIDTH, WINDOW_HEIGHT,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("smonky",
+                              SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                              WINDOW_WIDTH, WINDOW_HEIGHT,
+                              SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -125,7 +129,8 @@ int main(int argc, char **argv)
 
     // Load font
     TTF_Font *font = TTF_OpenFont("./assets/FreeSans.ttf", 24);
-    if (font == NULL) {
+    if (font == NULL)
+    {
         printf("Failed to load font: %s\n", TTF_GetError());
         return 1;
     }
@@ -136,12 +141,12 @@ int main(int argc, char **argv)
     SDL_QueryTexture(smoke_texture, NULL, NULL, &width, &height);
     const int smoke_scale = 4;
     const struct dimensions smoke_shape = {
-        64 * smoke_scale, 
+        64 * smoke_scale,
         64 * smoke_scale,
     };
 
     struct smoke smokes[NUM_SMOKES];
-    for(int i = 0; i < NUM_SMOKES; i++)
+    for (int i = 0; i < NUM_SMOKES; i++)
     {
         vec2 dir;
         dir[0] = 0;
@@ -157,22 +162,25 @@ int main(int argc, char **argv)
     double dt = 0;
 
     SDL_Event event;
-    while (1) {
+    while (1)
+    {
         // update delta time
         frame_time_last = frame_time_now;
         frame_time_now = SDL_GetPerformanceCounter();
-        dt = (double)((frame_time_now - frame_time_last) / (double)SDL_GetPerformanceFrequency() );
-        const double fps = 1.0 / dt;   
+        dt = (double)((frame_time_now - frame_time_last) / (double)SDL_GetPerformanceFrequency());
+        const double fps = 1.0 / dt;
 
         // events
         SDL_PollEvent(&event);
-        if (event.type == SDL_QUIT) {
+        if (event.type == SDL_QUIT)
+        {
             break;
         }
 
         // keys
         const Uint8 *keys = SDL_GetKeyboardState(NULL);
-        if (keys[SDL_SCANCODE_Q]) {
+        if (keys[SDL_SCANCODE_Q])
+        {
             break;
         }
 
@@ -201,7 +209,8 @@ int main(int argc, char **argv)
         glm_vec2_normalize(to_mouse);
 
         // update smokes
-        for(int i = 0; i < NUM_SMOKES; i++) {
+        for (int i = 0; i < NUM_SMOKES; i++)
+        {
             // multiply velocity by delta time
             vec2 dtvel;
             glm_vec2_scale(smokes[i].vel, dt, dtvel);
@@ -223,15 +232,16 @@ int main(int argc, char **argv)
 
             // age out
             smokes[i].life -= dt;
-            if (smokes[i].life < 0) {
+            if (smokes[i].life < 0)
+            {
                 smokes[i] = new_smoke(to_mouse);
             }
 
             // bounds check
-            if ((smokes[i].pos[1] < 0)  ||
-                (smokes[i].pos[1] > WINDOW_HEIGHT)  ||
-                (smokes[i].pos[0] < 0)  ||
-                (smokes[i].pos[0] > WINDOW_WIDTH)) 
+            if ((smokes[i].pos[1] < 0) ||
+                (smokes[i].pos[1] > WINDOW_HEIGHT) ||
+                (smokes[i].pos[0] < 0) ||
+                (smokes[i].pos[0] > WINDOW_WIDTH))
             {
                 smokes[i] = new_smoke(to_mouse);
             }
@@ -244,19 +254,17 @@ int main(int argc, char **argv)
             a = a * a;
             a = a * 255;
             int alpha = (int)a;
-            // SDL_SetRenderDrawColor(renderer, 255, 255, 255, col);    
+            // SDL_SetRenderDrawColor(renderer, 255, 255, 255, col);
 
             //  // pos
             vec2 scale = {
                 smoke_shape.width * smokes[i].size,
-                smoke_shape.height * smokes[i].size
-            };
+                smoke_shape.height * smokes[i].size};
             const SDL_Rect rect = {
                 (int)smokes[i].pos[0] - (scale[0] / 2),
                 (int)smokes[i].pos[1] - (scale[1] / 2),
                 (int)scale[0],
-                (int)scale[1]
-            };
+                (int)scale[1]};
             // SDL_RenderCopy(renderer, smoke_texture, NULL, &rect);
             SDL_SetTextureAlphaMod(smoke_texture, alpha);
             const float angle = smokes[i].angle;
@@ -264,18 +272,12 @@ int main(int argc, char **argv)
             // SDL_RenderFillRect(renderer, &rect);
         }
 
-
-
-
         // draw fps
         const SDL_Color color = {255, 255, 255, 255};
-             
+
         char fps_str[32];
         sprintf(fps_str, "%f", fps);
         draw_text(renderer, font, fps_str, color, 0, 0);
-
-
-
 
         SDL_RenderPresent(renderer);
     }
@@ -286,5 +288,4 @@ int main(int argc, char **argv)
     SDL_Quit();
 
     return 0;
-
 }
