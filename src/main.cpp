@@ -116,6 +116,8 @@ void render()
 
         // Set vertex data
         glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+
+        // GLfloat g[] = {1.0f, 1.0f};
         glVertexAttribPointer(gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
 
         // Set index data and render

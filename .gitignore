@@ -50,3 +50,14 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+ 
+# Build folders
+build/
+build/**
+!build/.gitkeep
+builddir/**
+!builddir/.gitkeep
+subprojects/**
+!subprojects/.gitkeep
+.DS_Store
+.vscode/
