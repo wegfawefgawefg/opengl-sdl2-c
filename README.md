@@ -1,4 +1,4 @@
-# opengl-sdl2-c
+# opengl-sdl2-cpp
 
 can i get it to compile and spin some triangles?
 
